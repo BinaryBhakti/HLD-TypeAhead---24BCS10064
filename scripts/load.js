@@ -5,7 +5,7 @@
 //   node scripts/load.js [path]
 //
 // Default path is data/queries.csv (the full dataset produced by download-dataset.js).
-// Falls back to nothing — if you haven't fetched the big dataset, run:
+// Falls back to nothing - if you haven't fetched the big dataset, run:
 //   node scripts/load.js data/sample-queries.csv   (npm run load:sample)
 //
 // Counts are REPLACED, not added, so re-running is idempotent. Duplicate queries
@@ -96,7 +96,7 @@ async function main() {
   const distinct = db.prepare('SELECT COUNT(*) AS n FROM queries').get().n;
   console.log(`\ndone. ${total.toLocaleString()} rows read, ${distinct.toLocaleString()} distinct queries in store (${skipped} skipped).`);
   if (distinct < 100_000 && !file.includes('sample')) {
-    console.warn('note: under the 100k minimum — fetch a larger dataset with `npm run fetch-data`.');
+    console.warn('note: under the 100k minimum - fetch a larger dataset with `npm run fetch-data`.');
   }
   db.close();
 }

@@ -3,7 +3,7 @@
 // Recency-aware ranking (the +20%).
 //
 // Baseline ranking is just all-time count. Here we add a *decayed* recent-activity
-// term so queries that are hot right now float up, and — crucially — fall back down
+// term so queries that are hot right now float up, and - crucially - fall back down
 // on their own once the searches stop, because the recent term decays to zero.
 //
 //   score = log(1 + allTimeCount) + WEIGHT * recentWeight(now)
@@ -12,7 +12,7 @@
 //   permanently bury everything; the recent term can actually move the ranking.
 // - recentWeight is an exponentially-decaying accumulator. Each search adds to it;
 //   between searches it decays with a half-life H. A 1-minute-old search counts far
-//   more than a 1-hour-old one, and a burst that ends simply melts away — that's how
+//   more than a 1-hour-old one, and a burst that ends simply melts away - that's how
 //   we avoid permanently over-ranking a short-lived spike (REQUIREMENTS §6).
 
 class Trending {

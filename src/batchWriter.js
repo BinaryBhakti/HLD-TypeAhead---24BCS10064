@@ -9,8 +9,8 @@
 //
 // Failure trade-off (REQUIREMENTS §7): the buffer is in memory, so a crash loses
 // at most one flush-interval of searches. That's acceptable for popularity counts.
-// Hardening it would mean writing to a durable log before acking — which reintroduces
-// the per-request synchronous write we're trying to avoid — so it's left out by design.
+// Hardening it would mean writing to a durable log before acking - which reintroduces
+// the per-request synchronous write we're trying to avoid - so it's left out by design.
 
 class BatchWriter {
   constructor({ db, trie, trending, cache, flushMs = 2000, flushSize = 500, clock = Date.now } = {}) {
@@ -50,7 +50,7 @@ class BatchWriter {
       rows.push({ query, count: delta, lastSeen: now });
     }
 
-    // 1) Persist — one transaction for the whole batch.
+    // 1) Persist - one transaction for the whole batch.
     this.db.flushBatch(rows);
 
     // 2) Update the in-memory read structures so suggestions reflect the writes.
@@ -71,14 +71,14 @@ class BatchWriter {
   }
 
   // A query can only appear in suggestions for its own prefixes, so those are the
-  // only cache keys whose ranking just changed. Cap the length we bother with —
+  // only cache keys whose ranking just changed. Cap the length we bother with -
   // nobody caches a 60-char prefix.
   _invalidatePrefixes(query) {
     const max = Math.min(query.length, 20);
     for (let i = 1; i <= max; i++) this.cache.invalidate(query.slice(0, i));
   }
 
-  // Ratio of raw searches to actual DB writes — the headline write-reduction number.
+  // Ratio of raw searches to actual DB writes - the headline write-reduction number.
   writeReduction() {
     return this.stats.rowsWritten === 0 ? 0 : this.stats.enqueued / this.stats.rowsWritten;
   }

@@ -4,13 +4,13 @@
 //
 // Why this and not `hash(key) % N`: with modulo, changing N remaps almost every
 // key. On the ring, adding/removing one node only moves the keys that sat between
-// the new/removed node and its predecessor — about 1/N of them. Virtual nodes
+// the new/removed node and its predecessor - about 1/N of them. Virtual nodes
 // (many ring positions per physical node) keep the load even; with one position
 // each, a 3-node ring splits traffic very unequally. See REQUIREMENTS §5.
 
 // FNV-1a (32-bit) for the byte mixing, followed by a murmur3-style finalizer.
-// The finalizer matters: FNV alone has weak avalanche, so "cache-1#0", "cache-1#1", …
-// hash to nearby ring positions — all of a node's virtual nodes clump together and
+// The finalizer matters: FNV alone has weak avalanche, so "cache-1#0", "cache-1#1", ...
+// hash to nearby ring positions - all of a node's virtual nodes clump together and
 // the ring stops balancing. The finalizer scatters them, which is the whole point of
 // having virtual nodes. (Verified: 100k keys land ~33/33/33 across 3 nodes.)
 function fnv1a(str) {

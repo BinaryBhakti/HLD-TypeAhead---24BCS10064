@@ -68,7 +68,7 @@ class DistributedCache {
     this.nodeFor(prefix).map.delete(prefix);
   }
 
-  // Peek without counting a hit/miss — used by GET /cache/debug.
+  // Peek without counting a hit/miss - used by GET /cache/debug.
   inspect(prefix, now = Date.now()) {
     const node = this.nodeFor(prefix);
     const entry = node.map.get(prefix);
@@ -81,7 +81,7 @@ class DistributedCache {
     return total === 0 ? 0 : this.stats.hits / total;
   }
 
-  // Per-node key counts — handy for showing the ring spreads load evenly.
+  // Per-node key counts - handy for showing the ring spreads load evenly.
   distribution() {
     const out = {};
     for (const [id, node] of this.nodes) out[id] = node.map.size;

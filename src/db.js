@@ -5,12 +5,12 @@ const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 const config = require('./config');
 
-// Primary store. One aggregated row per query — see REQUIREMENTS §3 for why we
+// Primary store. One aggregated row per query - see REQUIREMENTS §3 for why we
 // don't keep a per-event log. Everything else (trie, cache) is derived from this
 // and can be rebuilt by re-reading the table.
 //
 // We use Node's built-in node:sqlite (synchronous), so there's no native module
-// to compile — `npm install` just pulls express and the app runs anywhere Node 22+
+// to compile - `npm install` just pulls express and the app runs anywhere Node 22+
 // is installed.
 
 fs.mkdirSync(path.dirname(config.dbPath), { recursive: true });
@@ -49,7 +49,7 @@ const stmts = {
 };
 
 // Apply a batch of aggregated updates in a single transaction. This is the only
-// write path — POST /search never writes directly (REQUIREMENTS §7).
+// write path - POST /search never writes directly (REQUIREMENTS §7).
 function flushBatch(rows) {
   if (rows.length === 0) return;
   db.exec('BEGIN');

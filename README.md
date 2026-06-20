@@ -1,7 +1,7 @@
 # Search Typeahead
 
 A search autocomplete system: type a prefix, get the 10 most popular matching queries; submit a
-search and the popularity updates. The interesting part is the backend — a prefix trie for fast
+search and the popularity updates. The interesting part is the backend - a prefix trie for fast
 reads, a distributed cache addressed by consistent hashing, recency-aware "trending" ranking, and
 batched writes so the database isn't hit on every search.
 
@@ -11,7 +11,7 @@ this file is just how to run it.
 ## Stack
 
 - **Node.js + Express** backend
-- **SQLite** as the primary store, via Node's built-in `node:sqlite` — **no native modules to compile**,
+- **SQLite** as the primary store, via Node's built-in `node:sqlite` - **no native modules to compile**,
   so `npm install` only pulls Express
 - **In-process logical cache nodes** on a consistent-hash ring (no Redis/Docker needed to demo)
 - **Vanilla HTML/CSS/JS** frontend, no build step
@@ -23,14 +23,18 @@ Requires **Node 22+** (uses `node:sqlite`). Tested on Node 24.
 ```bash
 npm install
 
-# load data — either the bundled sample (runs immediately)...
-npm run load:sample
-
-# ...or the full 150k+ dataset (downloads a Wikipedia pageviews dump, see below)
-npm run fetch-data
+# The full 150k-row dataset (data/queries.csv) ships with the repo, so just:
 npm run load
 
 npm start          # http://localhost:3000
+```
+
+Other data options:
+
+```bash
+npm run load:sample        # tiny bundled sample, if you just want it up fast
+npm run fetch-data         # re-download a fresh Wikipedia pageviews dump
+npm run load               # then load whatever is in data/queries.csv
 ```
 
 Open http://localhost:3000, start typing.
@@ -39,10 +43,10 @@ Open http://localhost:3000, start typing.
 
 The store expects `query,count` rows. Two ways to fill it:
 
-1. **Bundled sample** — `data/sample-queries.csv` (~116 rows) is committed so the app works the
+1. **Bundled sample** - `data/sample-queries.csv` (~116 rows) is committed so the app works the
    moment you clone it. Good enough to see suggestions, trending and batching working; too small for
    meaningful latency/distribution numbers.
-2. **Full dataset (≥100k, for the real demo)** — `npm run fetch-data` streams one hour of the
+2. **Full dataset (>=100k, for the real demo)** - `npm run fetch-data` streams one hour of the
    [Wikipedia pageviews dump](https://dumps.wikimedia.org/other/pageviews/), keeps English titles,
    uses page title as the query and view count as popularity, and writes the top 150k to
    `data/queries.csv`. Then `npm run load`.
@@ -104,7 +108,7 @@ docs/                architecture, api, performance report
 
 ## Docs
 
-- [REQUIREMENTS.md](REQUIREMENTS.md) — what's being built and why each decision was made
-- [docs/architecture.md](docs/architecture.md) — components, data flow, diagram
-- [docs/api.md](docs/api.md) — endpoint reference
-- [docs/performance-report.md](docs/performance-report.md) — measured latency, cache hit rate, write reduction
+- [REQUIREMENTS.md](REQUIREMENTS.md) - what's being built and why each decision was made
+- [docs/architecture.md](docs/architecture.md) - components, data flow, diagram
+- [docs/api.md](docs/api.md) - endpoint reference
+- [docs/performance-report.md](docs/performance-report.md) - measured latency, cache hit rate, write reduction

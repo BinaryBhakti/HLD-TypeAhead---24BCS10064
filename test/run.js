@@ -76,7 +76,7 @@ test('adding a node remaps far less than hash % N would', () => {
   keys.forEach((k, i) => { if (ring.getNode(k) !== before[i]) moved++; });
   const frac = moved / keys.length;
   // ~1/4 of keys should move (the share the new node takes). modulo would move ~3/4.
-  assert.ok(frac < 0.4, `moved ${(frac * 100).toFixed(1)}% on add — too many`);
+  assert.ok(frac < 0.4, `moved ${(frac * 100).toFixed(1)}% on add - too many`);
 });
 
 // ---- trending ---------------------------------------------------------------

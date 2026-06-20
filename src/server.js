@@ -28,7 +28,7 @@ const service = new SuggestService({ trie, cache, trending, db, config });
 
 const loaded = service.load();
 if (loaded === 0) {
-  console.warn('[startup] queries table is empty — run `npm run load` (or `npm run load:sample`) first.');
+  console.warn('[startup] queries table is empty - run `npm run load` (or `npm run load:sample`) first.');
 }
 batch.start();
 

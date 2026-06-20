@@ -104,7 +104,7 @@ async function submitSearch(query) {
   if (!q) return;
   $q.value = q;
   closeList();
-  setStatus('Searching…');
+  setStatus('Searching...');
   try {
     const res = await fetch('/search', {
       method: 'POST',
