@@ -1,0 +1,9 @@
+node_modules/
+data/queries.csv
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+data/pageviews-*.gz
+*.log
+.env

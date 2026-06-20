@@ -1,0 +1,23 @@
+{
+  "name": "search-typeahead",
+  "version": "1.0.0",
+  "description": "Search typeahead with a prefix trie, a consistent-hashed distributed cache, recency-aware trending, and batched writes.",
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "load": "node --disable-warning=ExperimentalWarning scripts/load.js",
+    "load:sample": "node --disable-warning=ExperimentalWarning scripts/load.js data/sample-queries.csv",
+    "fetch-data": "node scripts/download-dataset.js",
+    "bench": "node scripts/bench.js",
+    "test": "node --disable-warning=ExperimentalWarning test/run.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

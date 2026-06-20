@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Typeahead</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <h1>Search</h1>
+
+    <div class="searchbar">
+      <div class="combo">
+        <input
+          id="q"
+          type="text"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Start typing…"
+          aria-label="Search"
+          aria-expanded="false"
+          aria-controls="suggestions"
+          role="combobox" />
+        <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
+      </div>
+      <button id="go">Search</button>
+    </div>
+
+    <p id="status" class="status" role="status"></p>
+
+    <section id="result" class="result" hidden>
+      <span class="result-label">Response</span>
+      <code id="result-body"></code>
+    </section>
+
+    <section class="trending">
+      <h2>Trending</h2>
+      <ol id="trending-list" class="trending-list"></ol>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
