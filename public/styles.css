@@ -96,6 +96,9 @@ h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; colo
   flex-direction: column;
   gap: 6px;
 }
+/* `display: flex` above would otherwise override the [hidden] attribute, so the
+   empty response box would show on load. Keep it hidden until there's a result. */
+.result[hidden] { display: none; }
 .result-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 #result-body { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9rem; }
 

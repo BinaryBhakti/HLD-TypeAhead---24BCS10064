@@ -53,11 +53,22 @@ Prefix suggestions — the trie returns the top matches as you type, prefix bold
 
 ![Typeahead suggestions for the prefix "ip"](docs/screenshots/02-suggestions.png)
 
+Trending is recency-aware, not just all-time popularity. Here `ip code` (count 162) outranks
+`youtube` (22,609 views) because it was just searched repeatedly — the recency boost decays over
+~10 minutes, after which it falls back down:
+
+![Trending shows recently-searched terms ranked above more popular ones](docs/screenshots/05-trending-recency.png)
+
+Backend: a `/suggest` JSON response, consistent-hash routing sending three prefixes to three
+different Redis nodes, and live `/stats` (hit rate + keys per node, matching `redis-cli dbsize`):
+
+![API responses for /suggest, /cache/debug routing, and /stats](docs/screenshots/06-api-cache.png)
+
 Keyboard navigation (↑/↓ to move, Enter to search) and the `POST /search` response:
 
 ![Search submitted, showing the Searched response and the trending panel](docs/screenshots/04-search-result.png)
 
-The landing view and keyboard-highlight states are in [docs/screenshots/](docs/screenshots/).
+The landing and keyboard-highlight states are in [docs/screenshots/](docs/screenshots/).
 
 ## Dataset
 
