@@ -1,0 +1,704 @@
+<style>
+  :root {
+    --ground: #F3F6FC;
+    --surface: #FFFFFF;
+    --text: #15233F;
+    --muted: #5B6B86;
+    --accent: #2347E6;
+    --accent-2: #E0922F;
+    --line: #D5DDEC;
+    --line-strong: #B7C3DC;
+    --code-bg: #EDF1FA;
+    --good: #0E8F73;
+
+    --mono: ui-monospace, "Cascadia Code", "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    --serif: Georgia, Cambria, "Times New Roman", serif;
+    --sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 32px 96px;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    position: relative;
+    margin: 0 -32px 64px;
+    padding: 72px 32px 56px;
+    background:
+      linear-gradient(180deg, rgba(35,71,230,0.05), rgba(35,71,230,0) 70%),
+      repeating-linear-gradient(0deg, rgba(35,71,230,0.06) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, rgba(35,71,230,0.06) 0 1px, transparent 1px 28px),
+      var(--surface);
+    border-bottom: 2px solid var(--text);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 20px;
+  }
+  .eyebrow .sep { color: var(--line-strong); margin: 0 10px; }
+  h1.title {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(40px, 7vw, 76px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin: 0 0 22px;
+  }
+  h1.title .ghost { color: var(--accent); }
+  .thesis {
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 64ch;
+    margin: 0 0 34px;
+  }
+  .specline {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    margin-bottom: 36px;
+  }
+  .specline b { color: var(--text); font-weight: 600; }
+
+  /* hero instrument readout */
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+  }
+  .readout .cell {
+    padding: 18px 20px;
+    border-right: 1px solid var(--line);
+  }
+  .readout .cell:last-child { border-right: none; }
+  .readout .val {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--accent-2);
+    line-height: 1;
+  }
+  .readout .val.cool { color: var(--accent); }
+  .readout .unit { font-size: 15px; color: var(--muted); }
+  .readout .lab {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 9px;
+  }
+
+  /* ---------- section scaffolding ---------- */
+  .section { margin-top: 72px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    border-top: 2px solid var(--text);
+    padding-top: 14px;
+    margin-bottom: 26px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .section-head h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: clamp(26px, 3.6vw, 36px);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    margin: 36px 0 10px;
+  }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+
+  /* ---------- tables ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    margin: 18px 0 8px;
+    break-inside: avoid;
+  }
+  caption {
+    caption-side: bottom;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    text-align: left;
+    padding-top: 8px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  thead th {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1.5px solid var(--line-strong);
+  }
+  tbody tr:last-child td { border-bottom: 1.5px solid var(--line-strong); }
+  td.num, th.num { font-family: var(--mono); white-space: nowrap; }
+  td .hl { color: var(--accent-2); font-weight: 600; }
+
+  /* ---------- code ---------- */
+  pre, code { font-family: var(--mono); }
+  pre {
+    background: var(--text);
+    color: #E8EDF7;
+    border-radius: 6px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+    break-inside: avoid;
+  }
+  pre .c { color: #8FA0C4; }      /* comment */
+  pre .k { color: #7FB5FF; }      /* command/keyword */
+  pre .s { color: #E0922F; }      /* string/value */
+  p code, li code, td code {
+    background: var(--code-bg);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.86em;
+  }
+
+  /* ---------- callouts ---------- */
+  .tradeoff {
+    border-left: 3px solid var(--accent-2);
+    background: rgba(224,146,47,0.07);
+    padding: 12px 18px;
+    margin: 16px 0;
+    font-size: 15px;
+    border-radius: 0 4px 4px 0;
+  }
+  .tradeoff .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9a6313;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  ul.clean { padding-left: 20px; margin: 8px 0 16px; }
+  ul.clean li { margin-bottom: 7px; }
+
+  /* ---------- architecture schematic ---------- */
+  .schematic {
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    padding: 26px;
+    margin: 22px 0;
+    break-inside: avoid;
+  }
+  .node-top {
+    border: 1.5px solid var(--text);
+    background: var(--ground);
+    text-align: center;
+    padding: 12px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .node-top .sub { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--muted); display:block; margin-top:3px; }
+  .arrow-row { display: flex; justify-content: space-around; color: var(--accent); font-family: var(--mono); font-size: 12px; padding: 8px 0; }
+  .arrow-row span { text-align: center; }
+  .paths { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .path {
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .path-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    color: #fff;
+  }
+  .path.read .path-label { background: var(--accent); }
+  .path.write .path-label { background: var(--accent-2); }
+  .path .body { padding: 14px; font-family: var(--sans); font-size: 13px; }
+  .path ol { margin: 0; padding-left: 18px; }
+  .path ol li { margin-bottom: 5px; }
+  .stores { display: flex; gap: 10px; margin-top: 12px; }
+  .store {
+    flex: 1;
+    border: 1px dashed var(--line-strong);
+    border-radius: 5px;
+    padding: 10px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-align: center;
+    background: var(--ground);
+  }
+  .store b { font-family: var(--sans); font-size: 12.5px; display: block; margin-bottom: 3px; }
+  .redis-list { color: var(--accent); }
+  .truth {
+    margin-top: 14px;
+    border: 1.5px solid var(--text);
+    background: var(--text);
+    color: #E8EDF7;
+    text-align: center;
+    padding: 11px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 5px;
+  }
+  .truth .sub { font-family: var(--mono); font-weight: 400; font-size: 11.5px; color: #97A6C8; display:block; margin-top: 3px; }
+
+  /* ring figure */
+  .ring-fig { display: grid; grid-template-columns: 240px 1fr; gap: 26px; align-items: center; margin: 20px 0; break-inside: avoid; }
+  .ring-fig figcaption { font-size: 15px; color: var(--text); }
+  .ring-fig .legend { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .ring-fig .legend i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align: middle; }
+
+  /* ---------- API cards ---------- */
+  .endpoint {
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--surface);
+    margin: 14px 0;
+    overflow: hidden;
+    break-inside: avoid;
+  }
+  .endpoint .sig {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ground);
+  }
+  .method {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 3px 9px;
+    border-radius: 4px;
+    color: #fff;
+  }
+  .method.get { background: var(--accent); }
+  .method.post { background: var(--accent-2); }
+  .path-uri { font-family: var(--mono); font-size: 14px; font-weight: 600; }
+  .endpoint .desc { padding: 12px 16px 4px; font-size: 14.5px; }
+  .endpoint pre { margin: 0 16px 16px; }
+
+  /* ---------- perf metric cards ---------- */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .metric {
+    border: 1px solid var(--line-strong);
+    border-top: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 16px 18px;
+  }
+  .metric.amber { border-top-color: var(--accent-2); }
+  .metric .m-val { font-family: var(--mono); font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .metric.amber .m-val { color: var(--accent-2); }
+  .metric:not(.amber) .m-val { color: var(--accent); }
+  .metric .m-lab { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-top: 8px; }
+
+  .tally { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0; }
+  .tally .t { border: 1px solid var(--line); border-radius: 5px; padding: 12px; text-align: center; background: var(--surface); }
+  .tally .t b { font-family: var(--mono); font-size: 20px; color: var(--good); display: block; }
+  .tally .t span { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+  footer {
+    margin-top: 80px;
+    border-top: 2px solid var(--text);
+    padding-top: 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 720px) {
+    .readout { grid-template-columns: repeat(2, 1fr); }
+    .readout .cell:nth-child(2) { border-right: none; }
+    .paths { grid-template-columns: 1fr; }
+    .ring-fig { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: 1fr; }
+    .tally { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { max-width: none; padding: 0 6mm 0; }
+    .masthead { margin: 0 0 36px; border-radius: 0; }
+    .section { break-before: page; margin-top: 32px; }
+    .section:first-of-type { break-before: avoid; }
+    pre { background: #1c2942 !important; }
+    a { color: var(--text); border: none; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">Systems Design<span class="sep">/</span>High-Level Design<span class="sep">/</span>24BCS10064</p>
+    <h1 class="title">Search Typeahead<br><span class="ghost">System.</span></h1>
+    <p class="thesis">A search-autocomplete backend built around one idea: keep the read path off the database entirely. A prefix trie answers every keystroke in memory, a hand-written consistent-hash ring spreads cached results across three real Redis nodes, recency-aware ranking surfaces what is trending now, and writes are batched so popularity counts never touch SQLite one search at a time.</p>
+    <p class="specline"><b>Stack:</b> Node.js · Express · node:sqlite · Redis ×3 (Docker) &nbsp;·&nbsp; <b>Dataset:</b> 149,803 Wikipedia page titles &nbsp;·&nbsp; <b>Ring:</b> 150 virtual nodes/node</p>
+
+    <div class="readout">
+      <div class="cell">
+        <div class="val">9.14<span class="unit"> ms</span></div>
+        <div class="lab">p95 latency · Redis</div>
+      </div>
+      <div class="cell">
+        <div class="val">99.4<span class="unit"> %</span></div>
+        <div class="lab">cache hit rate</div>
+      </div>
+      <div class="cell">
+        <div class="val cool">1</div>
+        <div class="lab">DB read / 20k requests</div>
+      </div>
+      <div class="cell">
+        <div class="val cool">~18<span class="unit">×</span></div>
+        <div class="lab">write reduction</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 01 ARCHITECTURE ============ -->
+  <section class="section">
+    <div class="section-head"><span class="section-num">01</span><h2>Architecture</h2></div>
+
+    <p>The system deliberately splits <b>reads</b> (suggestions) from <b>writes</b> (search submissions). Reads are served from memory and the cache and never block on the database. Writes are buffered and applied to SQLite in aggregated batches. The trie and cache are derived, rebuildable views; SQLite is the single source of truth.</p>
+
+    <div class="schematic" aria-label="Architecture data-flow diagram">
+      <div class="node-top">Browser UI<span class="sub">debounced GET /suggest &nbsp;·&nbsp; POST /search on enter</span></div>
+      <div class="arrow-row"><span>&darr;&nbsp; GET /suggest</span><span>POST /search &nbsp;&darr;</span></div>
+      <div class="paths">
+        <div class="path read">
+          <div class="path-label">Read path · SuggestService</div>
+          <div class="body">
+            <ol>
+              <li>normalize prefix</li>
+              <li>consistent-hash &rarr; owning cache node</li>
+              <li>cache hit? return cached top-10</li>
+              <li>miss &rarr; walk trie for candidates</li>
+              <li>trending mode? recency re-rank</li>
+              <li>store in owning node (TTL), return</li>
+            </ol>
+            <div class="stores">
+              <div class="store"><b>DistributedCache</b>ring &rarr;<br><span class="redis-list">redis cache-0/1/2</span><br>TTL per entry</div>
+              <div class="store"><b>Trie</b>in-memory<br>per-node top-K<br>O(prefix len)</div>
+            </div>
+          </div>
+        </div>
+        <div class="path write">
+          <div class="path-label">Write path · BatchWriter</div>
+          <div class="body">
+            <ol>
+              <li>enqueue(query) &rarr; in-mem buffer</li>
+              <li>aggregate duplicates</li>
+              <li>flush every 2s <b>or</b> 500 distinct:</li>
+              <li>&nbsp;&nbsp;one SQLite transaction (UPSERT)</li>
+              <li>&nbsp;&nbsp;bump trie + record trending</li>
+              <li>&nbsp;&nbsp;invalidate touched prefixes</li>
+            </ol>
+            <div class="stores">
+              <div class="store" style="flex:1"><b>In-memory buffer</b>query &rarr; pending count<br>(lost on crash: &le; 1 flush)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="truth">SQLite — <code style="color:#cdd9f2;background:none">queries(query, count, last_seen)</code><span class="sub">source of truth · trie built from here at startup · only the batch flush writes</span></div>
+    </div>
+
+    <h3>Components</h3>
+    <table>
+      <thead><tr><th>Module</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td class="num">server.js</td><td>Express app and routes; wires components together.</td></tr>
+        <tr><td class="num">suggestService.js</td><td>Read path: cache &rarr; trie &rarr; optional recency re-rank.</td></tr>
+        <tr><td class="num">trie.js</td><td>Prefix trie; each node caches the top-K completions in its subtree.</td></tr>
+        <tr><td class="num">consistentHash.js</td><td>Hash ring with virtual nodes; maps a prefix to one cache node.</td></tr>
+        <tr><td class="num">cache.js</td><td>Distributed cache over the ring; Redis or in-memory backend, TTL per entry.</td></tr>
+        <tr><td class="num">trending.js</td><td>Exponentially-decaying recency score per query.</td></tr>
+        <tr><td class="num">batchWriter.js</td><td>Buffers searches, aggregates duplicates, flushes to SQLite in batches.</td></tr>
+        <tr><td class="num">db.js</td><td>SQLite primary store (node:sqlite); single batched write path.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Consistent-hash routing</h3>
+    <figure class="ring-fig">
+      <svg viewBox="0 0 220 220" role="img" aria-label="Consistent hash ring with three nodes">
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#D5DDEC" stroke-width="16"/>
+        <!-- three 120-degree arcs, rotated to start at top -->
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#2347E6" stroke-width="16" stroke-dasharray="167.5 335.1" transform="rotate(-90 110 110)"/>
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#0E8F73" stroke-width="16" stroke-dasharray="167.5 335.1" transform="rotate(30 110 110)"/>
+        <circle cx="110" cy="110" r="80" fill="none" stroke="#E0922F" stroke-width="16" stroke-dasharray="167.5 335.1" transform="rotate(150 110 110)"/>
+        <!-- node dots at boundaries -->
+        <circle cx="110" cy="30" r="6" fill="#15233F"/>
+        <circle cx="179" cy="150" r="6" fill="#15233F"/>
+        <circle cx="41" cy="150" r="6" fill="#15233F"/>
+        <!-- key marker -->
+        <circle cx="150" cy="44" r="4.5" fill="#15233F"/>
+        <line x1="150" y1="44" x2="110" y2="110" stroke="#15233F" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="110" y="115" text-anchor="middle" font-family="ui-monospace,Consolas,monospace" font-size="11" fill="#5B6B86">"ipho"</text>
+      </svg>
+      <figcaption>
+        Each node owns an arc of the ring. A prefix is hashed to a point and walks <b>clockwise</b> to the first node it meets — so <code>"ipho"</code> lands on <code>cache-0</code>. Each physical node holds <b>150 virtual positions</b> on the ring, which keeps the load even and means adding or removing a node only remaps about <b>1/N</b> of keys instead of nearly all of them.
+        <div class="legend">
+          <i style="background:#2347E6"></i>cache-0 &nbsp; <i style="background:#0E8F73"></i>cache-1 &nbsp; <i style="background:#E0922F"></i>cache-2
+        </div>
+      </figcaption>
+    </figure>
+
+    <h3>Why reads never hit SQLite</h3>
+    <p>After the one-time startup load, suggestions come from the cache or the trie — both in memory. SQLite is touched only by the startup load and by batched writes. A 20,000-request benchmark produced exactly <b>one</b> database read. That is the entire purpose of the trie + cache layer.</p>
+
+    <div class="tradeoff">
+      <span class="tag">Fault tolerance</span>
+      The cache is an optimization, not a hard dependency. If a Redis node is unreachable, the read degrades to a cache miss and is served from the trie instead of failing. Killing a node mid-traffic was verified to keep every request returning 200, with the cache resuming cleanly on recovery.
+    </div>
+  </section>
+
+  <!-- ============ 02 DATASET ============ -->
+  <section class="section">
+    <div class="section-head"><span class="section-num">02</span><h2>Dataset</h2></div>
+
+    <p><b>Requirement:</b> at least 100,000 queries, each with a count. <b>Source:</b> Wikipedia pageviews hourly dumps. Each line is <code>domain page-title view-count bytes</code>; filtering English traffic for a single hour yields hundreds of thousands of <code>title &rarr; count</code> rows. The <b>page title becomes the query</b> and the <b>view count is the popularity signal</b>.</p>
+
+    <p>Why this dataset: it is fully open (no privacy issues, unlike the withdrawn AOL query log), it carries a genuine count per entry, it is reproducible from a fixed URL, and one hour of English traffic comfortably clears the 100k minimum. The bundled <code>data/queries.csv</code> holds <b>149,803 distinct queries</b> built this way.</p>
+
+    <h3>Loading instructions</h3>
+    <pre><span class="c"># install</span>
+<span class="k">npm</span> install
+
+<span class="c"># A — use the dataset committed in the repo (149,803 rows)</span>
+<span class="k">npm</span> run load
+
+<span class="c"># B — rebuild from a fresh Wikipedia dump, then load</span>
+<span class="k">node</span> scripts/download-dataset.js <span class="s">150000 20240115 12</span>   <span class="c"># topN, YYYYMMDD, HH</span>
+<span class="k">npm</span> run load
+
+<span class="c"># C — tiny bundled sample (~116 rows), for a quick smoke test</span>
+<span class="k">npm</span> run load:sample</pre>
+
+    <p><code>download-dataset.js</code> streams the <code>.gz</code>, keeps English titles, cleans them (underscores to spaces, drops namespace pages like <code>Special:</code> / <code>Talk:</code>, drops one-off noise), takes the top N by views, and writes <code>query,count</code>. <code>load.js</code> normalizes each query and UPSERTs it into SQLite; the trie is built from that table at startup.</p>
+
+    <div class="tradeoff">
+      <span class="tag">Verified end to end</span>
+      Run against a live dump: 7.75M lines scanned &rarr; 456K candidate titles &rarr; clean <code>query,count</code> output — counts sorted descending, zero namespace junk, zero malformed rows.
+    </div>
+  </section>
+
+  <!-- ============ 03 API ============ -->
+  <section class="section">
+    <div class="section-head"><span class="section-num">03</span><h2>API documentation</h2></div>
+    <p>Base URL <code>http://localhost:3000</code>. All inputs are normalized (trimmed, lowercased). Endpoints fail soft — bad input returns a 4xx with a clear body, never a stack trace.</p>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method get">GET</span><span class="path-uri">/suggest?q=&lt;prefix&gt;</span></div>
+      <div class="desc">Up to 10 prefix matches, ranked by count (or recency-aware <code>score</code> in trending mode). Empty/missing <code>q</code> returns the trending list; an unknown prefix returns an empty list with HTTP 200.</div>
+      <pre>{
+  <span class="k">"prefix"</span>: <span class="s">"ip"</span>,
+  <span class="k">"suggestions"</span>: [
+    { <span class="k">"query"</span>: <span class="s">"iphone"</span>, <span class="k">"count"</span>: 100000, <span class="k">"score"</span>: 11.51 },
+    { <span class="k">"query"</span>: <span class="s">"ipad"</span>,   <span class="k">"count"</span>: 67000,  <span class="k">"score"</span>: 11.11 }
+  ],
+  <span class="k">"cached"</span>: false, <span class="k">"nodeId"</span>: <span class="s">"cache-1"</span>, <span class="k">"source"</span>: <span class="s">"trie"</span>
+}</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method post">POST</span><span class="path-uri">/search</span></div>
+      <div class="desc">Body <code>{ "query": "&lt;text&gt;" }</code>. Buffers the search for the next batch flush — does not write synchronously — and returns the dummy response. Missing/blank query &rarr; 400; malformed JSON &rarr; <code>{"error":"invalid JSON body"}</code>.</div>
+      <pre>{ <span class="k">"message"</span>: <span class="s">"Searched"</span> }</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method get">GET</span><span class="path-uri">/trending?limit=&lt;n&gt;</span></div>
+      <div class="desc">Current trending queries, ordered by <b>decayed recent activity</b> (not raw count). Falls back to all-time top when nothing recent exists, so the panel is never empty.</div>
+      <pre>{ <span class="k">"trending"</span>: [ { <span class="k">"query"</span>: <span class="s">"iphone"</span>, <span class="k">"count"</span>: 100000, <span class="k">"recentWeight"</span>: 40.85 } ],
+  <span class="k">"rankMode"</span>: <span class="s">"trending"</span> }</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method get">GET</span><span class="path-uri">/cache/debug?prefix=&lt;p&gt;</span></div>
+      <div class="desc">Which cache node owns a prefix and whether it is currently cached — demonstrates consistent-hash routing. This call peeks; it does not count as a hit or miss.</div>
+      <pre>{ <span class="k">"prefix"</span>: <span class="s">"ip"</span>, <span class="k">"node"</span>: <span class="s">"cache-1"</span>, <span class="k">"hit"</span>: true, <span class="k">"ttlRemainingMs"</span>: 29759 }</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method get">GET</span><span class="path-uri">/stats</span></div>
+      <div class="desc">Live counters for the performance report: cache backend / nodes / hit rate / keys-per-node, DB read &amp; write counts, and batch buffer depth + write-reduction ratio.</div>
+      <pre>{ <span class="k">"cache"</span>: { <span class="k">"backend"</span>:<span class="s">"redis"</span>, <span class="k">"hitRate"</span>:0.9944,
+            <span class="k">"keysPerNode"</span>:{<span class="s">"cache-0"</span>:9,<span class="s">"cache-1"</span>:2,<span class="s">"cache-2"</span>:8} },
+  <span class="k">"db"</span>: { <span class="k">"reads"</span>:1, <span class="k">"writes"</span>:2 },
+  <span class="k">"batch"</span>: { <span class="k">"enqueued"</span>:90, <span class="k">"rowsWritten"</span>:5, <span class="k">"writeReduction"</span>:18.0 } }</pre>
+    </div>
+
+    <div class="endpoint">
+      <div class="sig"><span class="method get">GET</span><span class="path-uri">/health</span></div>
+      <div class="desc">Liveness probe.</div>
+      <pre>{ <span class="k">"ok"</span>: true }</pre>
+    </div>
+  </section>
+
+  <!-- ============ 04 DESIGN ============ -->
+  <section class="section">
+    <div class="section-head"><span class="section-num">04</span><h2>Design choices &amp; trade-offs</h2></div>
+
+    <h3>Stack</h3>
+    <table>
+      <thead><tr><th>Layer</th><th>Choice</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Backend</td><td class="num">Express</td><td>One language across the stack; the trie/cache/ring logic reads cleanly in JS.</td></tr>
+        <tr><td>Datastore</td><td class="num">node:sqlite</td><td>One file, real SQL, no native module to compile; synchronous API makes the read/write paths easy to reason about and to count.</td></tr>
+        <tr><td>Cache</td><td class="num">Redis ×3</td><td>Three independent processes (ports 6379–6381); the app routes across them via a ring it implements itself. An in-memory backend mirrors the same ring for tests/offline runs.</td></tr>
+        <tr><td>Frontend</td><td class="num">Vanilla JS</td><td>No build step; a debounced input and a dropdown are all the UI needs.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Trie for suggestions</h3>
+    <p>A prefix trie gives <code>O(prefix length)</code> lookups, independent of dataset size, because every node caches the top-K completions in its subtree. The alternative — a sorted array with binary search — finds the prefix range in <code>O(log n)</code> but must then scan and sort that whole range per request, which is far worse for short, hot prefixes like <code>"a"</code> that match a huge slice of the data. A key invariant keeps it cheap: counts only ever increase, so top-K is updated incrementally on each write rather than recomputing a subtree.</p>
+    <div class="tradeoff"><span class="tag">Trade-off</span>The materialized top-K is memory-hungry (~679 MB RSS for 149,803 queries — see §5). That is the deliberate price of flat read latency, and it is tunable by lowering the candidate-pool size K.</div>
+
+    <h3>Consistent hashing in application code</h3>
+    <p>The ring lives in our code, <b>not</b> in a Redis cluster. A cluster would hash keys for us inside the client, hiding the exact mechanism the assignment asks us to implement. So we run three plain, independent Redis nodes and route ourselves: hash the prefix, walk the ring clockwise, pick the node. 150 virtual nodes per physical node plus a murmur3-style finalizer keep the load even — without virtual nodes a 3-node ring splits traffic very unequally.</p>
+    <div class="tradeoff"><span class="tag">Why it matters</span>Adding or removing a node remaps only ~1/N of keys versus nearly all of them for naïve <code>hash(key) % N</code>. Measured: adding a 4th node moved 26.7% of keys, where modulo would move about 75%.</div>
+
+    <h3>Cache-aside with TTL</h3>
+    <p><code>/suggest</code> is cache-aside: check the cache, compute from the trie on a miss, write back under a short TTL (default 30s). The TTL bounds staleness, and writes additionally invalidate the affected prefixes on flush.</p>
+    <div class="tradeoff"><span class="tag">Trade-off</span>Suggestions can be up to one flush interval (~2s) or one TTL stale — fine for typeahead, where freshness within seconds is plenty and read latency stays flat.</div>
+
+    <h3>Batch writes</h3>
+    <p>Writing to SQLite once per search would make the DB the bottleneck. Instead searches are buffered and duplicates aggregated, so 50 searches for one query become a single <code>count += 50</code> update.</p>
+    <div class="tradeoff"><span class="tag">Failure model</span>The buffer is in memory, so a crash loses at most one flush interval of searches — and only popularity counts, never user data. The trie is rebuilt from SQLite (the source of truth) on restart. Hardening would mean a write-ahead log before acking, reintroducing the synchronous write batching exists to avoid.</div>
+
+    <h3>Trending: continuous exponential decay</h3>
+    <p>Rather than discrete hourly buckets, each query keeps a single exponentially-decaying recency accumulator with a ~10-minute half-life. The suggestion score is <code>log(1 + count) + W · decayed_recent_weight</code>. A short spike decays to zero on its own, so it cannot permanently over-rank a query; decayed entries are pruned on each flush.</p>
+
+    <h3>Availability over strict consistency</h3>
+    <p>A cache-node failure degrades to a trie read rather than an error. We chose to keep suggestions working from the trie over surfacing a cache outage to the user — the right call for a best-effort suggestion feature.</p>
+  </section>
+
+  <!-- ============ 05 PERFORMANCE ============ -->
+  <section class="section">
+    <div class="section-head"><span class="section-num">05</span><h2>Performance report</h2></div>
+    <p>All figures are measured and reproducible with <code>npm run bench</code>. Environment: Node.js v24, Windows 11, single machine; 149,803-query dataset; 3 cache nodes, 150 virtual nodes each, 30s TTL; trending ranking; single-threaded sequential benchmark client (so latencies are per-request service time, not contended throughput).</p>
+
+    <div class="metrics">
+      <div class="metric amber"><div class="m-val">9.14 ms</div><div class="m-lab">p95 · Redis backend</div></div>
+      <div class="metric"><div class="m-val">1.50 ms</div><div class="m-lab">p95 · memory backend</div></div>
+      <div class="metric amber"><div class="m-val">99.4 %</div><div class="m-lab">cache hit rate</div></div>
+    </div>
+
+    <h3>Suggestion latency · GET /suggest</h3>
+    <p>20,000 requests over a realistic prefix mix (60% hot, 30% warm, 10% cold), full dataset, on each cache backend:</p>
+    <table>
+      <thead><tr><th>Metric</th><th class="num">Redis (3 containers)</th><th class="num">Memory (in-process)</th></tr></thead>
+      <tbody>
+        <tr><td>average</td><td class="num">5.18 ms</td><td class="num">0.55 ms</td></tr>
+        <tr><td>p50</td><td class="num">4.56 ms</td><td class="num">0.37 ms</td></tr>
+        <tr><td>p95</td><td class="num"><span class="hl">9.14 ms</span></td><td class="num"><span class="hl">1.50 ms</span></td></tr>
+        <tr><td>p99</td><td class="num">15.2 ms</td><td class="num">2.67 ms</td></tr>
+        <tr><td>throughput</td><td class="num">~193 req/s</td><td class="num">~1,800 req/s</td></tr>
+      </tbody>
+      <caption>The gap is the cost of being genuinely distributed: every Redis hit is a real TCP round-trip to a separate process; the memory backend is a same-heap Map lookup. Latency does not grow with dataset size — the trie makes a lookup O(prefix length).</caption>
+    </table>
+
+    <h3>Consistent-hash distribution &amp; remap</h3>
+    <p>100,000 keys across 3 nodes — a property of the ring, not the data:</p>
+    <table>
+      <thead><tr><th>Node</th><th class="num">Keys</th><th class="num">Share</th></tr></thead>
+      <tbody>
+        <tr><td class="num">cache-0</td><td class="num">30,987</td><td class="num">31.0%</td></tr>
+        <tr><td class="num">cache-1</td><td class="num">34,841</td><td class="num">34.8%</td></tr>
+        <tr><td class="num">cache-2</td><td class="num">34,172</td><td class="num">34.2%</td></tr>
+      </tbody>
+      <caption>Adding a 4th node remapped only 26.7% of keys (ideal for 3&rarr;4 is 25%); naïve hash % N would remap ~75%. That ~3× reduction in cache churn on a topology change is the entire reason consistent hashing is used.</caption>
+    </table>
+
+    <h3>Reads avoided, writes reduced, memory cost</h3>
+    <ul class="clean">
+      <li><b>Database reads:</b> 1 total across the 20,000-request run (the startup load). The read path never touches SQL.</li>
+      <li><b>Write reduction:</b> ~18× measured on repeated popular queries; the ratio scales with how repetitive and bursty traffic is (a controlled 60-search / 2-query test showed 30×).</li>
+      <li><b>Memory footprint:</b> ~679 MB RSS with the full dataset loaded — the cost of the materialized per-node top-K that buys O(prefix) reads, tunable via the candidate-pool size K.</li>
+    </ul>
+
+    <h3>Correctness &amp; robustness testing</h3>
+    <div class="tally">
+      <div class="t"><b>12/12</b><span>unit tests</span></div>
+      <div class="t"><b>56/56</b><span>API edge ×2 backends</span></div>
+      <div class="t"><b>24/24</b><span>UI (real browser)</span></div>
+      <div class="t"><b>15/15</b><span>batch paths</span></div>
+      <div class="t"><b>pass</b><span>node-failure drill</span></div>
+    </div>
+    <p>Coverage included empty/missing/whitespace/unicode/SQL-injection inputs, no-match, case-folding, malformed JSON, 60 concurrent requests; debounce coalescing, keyboard navigation, and error states in a real browser; the <code>FLUSH_SIZE</code> early-flush, aggregation, and shutdown-drain paths; and a Redis node killed mid-traffic with every request staying 200 by degrading to the trie.</p>
+
+    <h3>Reproduce</h3>
+    <pre><span class="k">npm</span> run load                          <span class="c"># full dataset</span>
+<span class="k">docker</span> compose up -d                  <span class="c"># 3 Redis cache nodes</span>
+<span class="k">CACHE_BACKEND</span>=redis <span class="k">npm</span> start         <span class="c"># terminal 1 (omit env for memory backend)</span>
+<span class="k">npm</span> run bench <span class="s">20000</span>                   <span class="c"># terminal 2 -> latency + cache numbers</span>
+<span class="k">docker</span> exec typeahead-cache-0 redis-cli dbsize   <span class="c"># keys living in a node</span></pre>
+  </section>
+
+  <footer>
+    <span>Search Typeahead System · High-Level Design</span>
+    <span>Roll no 24BCS10064</span>
+  </footer>
+
+</div>

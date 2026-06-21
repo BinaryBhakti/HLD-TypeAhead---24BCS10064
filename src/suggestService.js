@@ -29,7 +29,8 @@ class SuggestService {
   }
 
   // GET /suggest. Returns the list plus enough metadata for the cache-debug story.
-  suggest(rawPrefix) {
+  // Async because the cache may be a real Redis node (network round-trip).
+  async suggest(rawPrefix) {
     const prefix = normalize(rawPrefix);
     const limit = this.config.suggestLimit;
 
@@ -39,7 +40,7 @@ class SuggestService {
     }
 
     const now = this.clock();
-    const cached = this.cache.get(prefix, now);
+    const cached = await this.cache.get(prefix, now);
     if (cached.hit) {
       return { prefix, suggestions: cached.value, cached: true, nodeId: cached.nodeId, source: 'cache' };
     }
@@ -52,7 +53,7 @@ class SuggestService {
       suggestions = candidates.slice(0, limit).map((e) => ({ query: e.query, count: e.count }));
     }
 
-    const nodeId = this.cache.set(prefix, suggestions, now);
+    const nodeId = await this.cache.set(prefix, suggestions, now);
     return { prefix, suggestions, cached: false, nodeId, source: 'trie' };
   }
 

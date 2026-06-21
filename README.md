@@ -11,12 +11,13 @@ this file is just how to run it.
 ## Stack
 
 - **Node.js + Express** backend
-- **SQLite** as the primary store, via Node's built-in `node:sqlite` - **no native modules to compile**,
-  so `npm install` only pulls Express
-- **In-process logical cache nodes** on a consistent-hash ring (no Redis/Docker needed to demo)
+- **SQLite** as the primary store, via Node's built-in `node:sqlite` - **no native modules to compile**
+- **3 real Redis nodes** (Docker Compose) on a consistent-hash ring the app implements itself. An
+  in-process `memory` backend is also built in for tests and offline runs (`CACHE_BACKEND=memory`),
+  using the exact same ring.
 - **Vanilla HTML/CSS/JS** frontend, no build step
 
-Requires **Node 22+** (uses `node:sqlite`). Tested on Node 24.
+Requires **Node 22+** (uses `node:sqlite`) and **Docker** (for the Redis nodes). Tested on Node 24.
 
 ## Quick start
 
@@ -26,7 +27,14 @@ npm install
 # The full 150k-row dataset (data/queries.csv) ships with the repo, so just:
 npm run load
 
-npm start          # http://localhost:3000
+docker compose up -d              # start the 3 Redis cache nodes (ports 6379-6381)
+CACHE_BACKEND=redis npm start     # http://localhost:3000
+```
+
+No Docker handy? Run against the in-process cache instead - same routing, same API:
+
+```bash
+npm start                         # CACHE_BACKEND defaults to memory
 ```
 
 Other data options:
@@ -88,6 +96,13 @@ RANK_MODE=popularity npm start   # 60% baseline: sort by all-time count
 RANK_MODE=trending   npm start   # default: recency-aware ranking
 ```
 
+The other one is the cache backend:
+
+```bash
+CACHE_BACKEND=redis  npm start   # real Redis nodes from docker-compose.yml
+CACHE_BACKEND=memory npm start   # default: in-process nodes, no Docker
+```
+
 ## Layout
 
 ```
@@ -96,7 +111,7 @@ src/
   suggestService.js  read path: cache -> trie -> recency re-rank
   trie.js            prefix trie, per-node top-K candidates
   consistentHash.js  hash ring with virtual nodes
-  cache.js           distributed cache (logical nodes + TTL)
+  cache.js           distributed cache (redis or memory backend + TTL)
   trending.js        decayed recency scoring
   batchWriter.js     buffer -> aggregate -> periodic/size flush
   db.js              SQLite primary store (node:sqlite)

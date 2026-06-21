@@ -11,15 +11,20 @@ const { Trending } = require('../src/trending');
 const { DistributedCache } = require('../src/cache');
 
 let passed = 0;
+const pending = [];
+// Register tests; run them in order at the end. fn may be sync or async (the
+// cache tests await Redis-shaped, now-async calls - here on the memory backend).
 function test(name, fn) {
-  try {
-    fn();
-    passed++;
-    console.log(`  ok  ${name}`);
-  } catch (e) {
-    console.error(`FAIL  ${name}\n      ${e.message}`);
-    process.exitCode = 1;
-  }
+  pending.push(async () => {
+    try {
+      await fn();
+      passed++;
+      console.log(`  ok  ${name}`);
+    } catch (e) {
+      console.error(`FAIL  ${name}\n      ${e.message}`);
+      process.exitCode = 1;
+    }
+  });
 }
 
 // ---- trie -------------------------------------------------------------------
@@ -105,27 +110,33 @@ test('prune drops decayed-to-nothing entries', () => {
   assert.strictEqual(tr.recentWeight('x', 100000), 0);
 });
 
-// ---- cache ------------------------------------------------------------------
-test('cache stores and serves, and expires by TTL', () => {
+// ---- cache (memory backend; the redis backend shares this exact routing) -----
+test('cache stores and serves, and expires by TTL', async () => {
   const c = new DistributedCache({ nodes: 3, ttlMs: 1000 });
-  c.set('ip', [{ query: 'iphone', count: 100 }], 0);
-  assert.strictEqual(c.get('ip', 500).hit, true);
-  assert.strictEqual(c.get('ip', 2000).hit, false); // past TTL
+  await c.set('ip', [{ query: 'iphone', count: 100 }], 0);
+  assert.strictEqual((await c.get('ip', 500)).hit, true);
+  assert.strictEqual((await c.get('ip', 2000)).hit, false); // past TTL
 });
 
-test('invalidate removes a key from its owning node', () => {
+test('invalidate removes a key from its owning node', async () => {
   const c = new DistributedCache({ nodes: 3, ttlMs: 100000 });
-  c.set('java', [{ query: 'java', count: 1 }], 0);
-  assert.strictEqual(c.get('java', 0).hit, true);
+  await c.set('java', [{ query: 'java', count: 1 }], 0);
+  assert.strictEqual((await c.get('java', 0)).hit, true);
   c.invalidate('java');
-  assert.strictEqual(c.get('java', 0).hit, false);
+  // invalidate is fire-and-forget; on the memory backend the delete is synchronous,
+  // but await a microtask turn to be safe regardless of backend.
+  await Promise.resolve();
+  assert.strictEqual((await c.get('java', 0)).hit, false);
 });
 
-test('a prefix always routes to the same node', () => {
+test('a prefix always routes to the same node', async () => {
   const c = new DistributedCache({ nodes: 5 });
-  const n1 = c.inspect('python').nodeId;
-  const n2 = c.inspect('python').nodeId;
+  const n1 = (await c.inspect('python')).nodeId;
+  const n2 = (await c.inspect('python')).nodeId;
   assert.strictEqual(n1, n2);
 });
 
-console.log(`\n${passed} passed`);
+(async () => {
+  for (const run of pending) await run();
+  console.log(`\n${passed} passed`);
+})();

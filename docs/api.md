@@ -102,6 +102,7 @@ curl "http://localhost:3000/stats"
   "rankMode": "trending",
   "dataset": { "queries": 149803 },
   "cache": {
+    "backend": "redis",
     "nodes": 3,
     "hits": 19972,
     "misses": 28,

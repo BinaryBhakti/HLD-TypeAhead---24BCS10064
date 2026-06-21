@@ -8,3 +8,6 @@ data/*.db-shm
 data/pageviews-*.gz
 *.log
 .env
+
+# personal planning notes, not part of the deliverable
+typeahead-roadmap.md

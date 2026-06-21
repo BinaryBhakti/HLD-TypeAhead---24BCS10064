@@ -31,16 +31,23 @@ not the other way around, so most of the thinking below is about storage, cachin
 | Layer | Choice | Reason |
 | --- | --- | --- |
 | Backend | Node.js + Express | Single language across the stack; the trie/cache/ring logic reads cleanly in JS, which matters for the viva. |
-| Datastore | SQLite (`better-sqlite3`) | One file, zero setup, real SQL. Synchronous API keeps the read/write paths easy to reason about and easy to count. |
-| Cache | In-process logical nodes | Several `Map`-backed "cache nodes" inside one process, addressed through a consistent-hash ring. No Docker/Redis needed to run the demo, and I keep full control to *log* the routing - which is the part being graded. |
+| Datastore | SQLite (`node:sqlite`) | One file, zero setup, real SQL. Node's built-in synchronous driver keeps the read/write paths easy to reason about and easy to count, with no native module to compile. |
+| Cache | 3 real Redis nodes (Docker Compose) | Three independent `redis:7-alpine` processes on ports 6379-6381. The app routes each prefix to exactly one of them through a consistent-hash ring it implements itself (`consistentHash.js`). A built-in `memory` backend mirrors the same ring for tests/offline runs. |
 | Frontend | Vanilla HTML/CSS/JS | No build step. Debounced fetch + a dropdown is all the UI needs, and there's nothing to explain away. |
 
-The one decision worth defending: **simulated cache nodes instead of real Redis.** The rubric asks
-me to *implement and demonstrate consistent hashing*, not to operate Redis. A real Redis cluster
-hides the hashing inside the client/cluster, so I'd lose the talking point. With in-process nodes I
-own the ring, can print which node a key lands on, and can add/remove a node live and show that only
-~1/N of keys move. The trade-off (no cross-process sharing, no persistence of cache) is fine for a
-single-process demo and I call it out in the perf report.
+The decision worth defending: **the consistent-hash ring lives in my application code, not in
+Redis.** A Redis *cluster* would hash keys for me inside the client/cluster, which hides the exact
+thing the rubric asks me to implement and demonstrate. So I run three *plain, independent* Redis
+nodes and do the routing myself: I hash the prefix, walk the ring, and pick the owning node. That
+keeps both properties I need to defend in the viva - real distributed nodes (separate processes,
+separate ports, real network hops, key data I can inspect with `redis-cli` in each container) **and**
+a ring I own, so I can print which node a key lands on and add/remove a node live to show only ~1/N
+of keys move.
+
+The `memory` backend (in-process `Map` per node, same ring) exists so `npm test` and a no-Docker
+checkout still work; it is selected with `CACHE_BACKEND=memory`. `CACHE_BACKEND=redis` is the real
+demo path. Switching backends changes only the per-node storage, never the routing - which is the
+graded part.
 
 ---
 
@@ -222,7 +229,9 @@ trie from the table at startup.
 
 So I don't get asked "why didn't you do X" without an answer:
 
-- No multi-process / real-network cache (single-process logical nodes - see §2).
+- No Redis *cluster* / sharding-in-the-client - the ring is mine on purpose (see §2). The nodes are
+  real separate Redis processes, but routing is application-side.
 - No personalization or ML ranking (popularity + recency only - that's what the rubric asks for).
 - No auth, no rate limiting - not part of the assignment.
-- Cache isn't persisted; the trie is rebuilt from SQLite on restart, which is the source of truth.
+- Cache isn't persisted (Redis runs with `--save "" --appendonly no`); the trie is rebuilt from
+  SQLite on restart, which is the source of truth.

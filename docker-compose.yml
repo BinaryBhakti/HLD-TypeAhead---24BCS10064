@@ -1,0 +1,35 @@
+# Three independent Redis nodes for the distributed suggestion cache.
+#
+# These are genuinely separate processes on separate ports - the app routes a
+# prefix to exactly one of them via the consistent-hash ring in src/consistentHash.js.
+# That is what makes "distributed cache with consistent hashing" mean something:
+# there are real, independent nodes to balance keys across and to add/remove.
+#
+#   docker compose up -d           # start all three
+#   CACHE_BACKEND=redis npm start  # point the app at them
+#   docker compose down            # stop them
+#
+# Persistence is off (--save "" --appendonly no): a cache is rebuildable from the
+# trie/SQLite, so there is nothing worth writing to disk.
+
+services:
+  cache-0:
+    image: redis:7-alpine
+    container_name: typeahead-cache-0
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+
+  cache-1:
+    image: redis:7-alpine
+    container_name: typeahead-cache-1
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6380:6379"
+
+  cache-2:
+    image: redis:7-alpine
+    container_name: typeahead-cache-2
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6381:6379"

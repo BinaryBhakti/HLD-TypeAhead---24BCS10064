@@ -27,8 +27,8 @@ database in batches.
          ▼                   ▼                      └───────────────┬────────────────────┘
  ┌───────────────┐   ┌───────────────────┐                         │
  │ DistributedCache│  │ Trie (in-memory)  │◄────────────────────────┘ updates
- │  N logical nodes│  │  per-node top-K   │
- │  ring + TTL     │  └─────────┬─────────┘
+ │ ring -> 3 Redis │  │  per-node top-K   │
+ │ nodes + TTL     │  └─────────┬─────────┘
  └─────────────────┘            │ built at startup from
                                 ▼
                        ┌───────────────────┐
@@ -53,10 +53,18 @@ nodes (150 per physical node) plus a murmur3-style hash finalizer keep the load 
 node-add/remove cheap (only ~1/N of keys move). See the [performance report](performance-report.md)
 for the measured numbers.
 
-**Distributed cache (`cache.js`)** - N independent logical nodes, each its own `Map`, addressed via
-the ring on the normalized prefix. Values are rendered top-10 lists with a TTL. In a real
-deployment each node would be a separate Redis process; in-process keeps the demo single-command and
-lets us log exactly where each key lands.
+**Distributed cache (`cache.js`)** - the ring maps a normalized prefix to one of N nodes; the node
+stores the rendered top-10 list under a TTL. Two interchangeable backends sit behind the same ring
+and the same async API:
+
+- `redis` (the demo path) - one real `redis:7-alpine` process per node, defined in
+  `docker-compose.yml` on ports 6379-6381. Real separate processes, real network hops; you can
+  `docker exec ... redis-cli` into any node and see the keys it owns. TTL is enforced by Redis (`PX`).
+- `memory` - one in-process `Map` per node, for tests and no-Docker runs. TTL is an expiry stamp
+  checked on read.
+
+Crucially the routing (the consistent-hash ring) is identical for both - only the per-node store
+changes - so the graded behaviour is the same whichever backend is running.
 
 **Trending (`trending.js`)** - an exponentially-decaying per-query activity accumulator. The
 suggestion score is `log(1 + allTimeCount) + W * decayedRecentWeight`. The recent term decays to
