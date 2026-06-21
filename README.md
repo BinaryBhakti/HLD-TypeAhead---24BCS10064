@@ -47,6 +47,18 @@ npm run load               # then load whatever is in data/queries.csv
 
 Open http://localhost:3000, start typing.
 
+## Screenshots
+
+Prefix suggestions — the trie returns the top matches as you type, prefix bolded, ranked by count:
+
+![Typeahead suggestions for the prefix "ip"](docs/screenshots/02-suggestions.png)
+
+Keyboard navigation (↑/↓ to move, Enter to search) and the `POST /search` response:
+
+![Search submitted, showing the Searched response and the trending panel](docs/screenshots/04-search-result.png)
+
+The landing view and keyboard-highlight states are in [docs/screenshots/](docs/screenshots/).
+
 ## Dataset
 
 The store expects `query,count` rows. Two ways to fill it:
